@@ -1,70 +1,157 @@
-# Getting Started with Create React App
+# **GarageBuddy**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web-based system to keep track of items in your garage with a visual map and inventory. The app lets you add items with photos, descriptions, categories, and location tags. You can also pinpoint each item’s location on a custom map of your garage.
 
-## Available Scripts
+## **Table of Contents**
 
-In the project directory, you can run:
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Setting Up the Garage Map](#setting-up-the-garage-map)
+- [Running the Application](#running-the-application)
+- [Accessing the Application on Mobile](#accessing-the-application-on-mobile)
+- [Project Structure](#project-structure)
+- [Technologies Used](#technologies-used)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## **Features**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Manage inventory items with descriptions, images, and categories.
+- Visualize item locations on a custom map of your garage.
+- Add, edit, and delete items from the inventory.
+- Responsive design for both desktop and mobile devices.
+- View detailed item information and pinpoint locations on a map.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## **Prerequisites**
 
-### `npm test`
+Before you begin, ensure you have the following installed on your system:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Node.js** (version 16.x or higher): [Download Node.js](https://nodejs.org/)
+- **Python** (version 3.8 or higher): [Download Python](https://www.python.org/)
+- **SQLite**: Comes pre-installed with Python.
+- **Git**: [Download Git](https://git-scm.com/)
+- **VSCode** (optional but recommended for development): [Download VSCode](https://code.visualstudio.com/)
 
-### `npm run build`
+## **Installation**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. **Clone the repository**:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   git clone https://github.com/your-username/garagebuddy.git
+   cd garagebuddy
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Set up the virtual environment** for the backend:
 
-### `npm run eject`
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **Install Python dependencies**:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. **Set up the frontend**:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   ```bash
+   cd garagebuddy_frontend
+   npm install
+   ```
 
-## Learn More
+5. **Create the SQLite database**:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   - Create a file named `garage.db` in the `backend` folder.
+   - The app will automatically initialize the required tables when you run the backend server.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## **Setting Up the Garage Map**
 
-### Code Splitting
+1. **Draw your garage map** using any image editor (e.g., Photoshop, GIMP, or even a hand-drawn map scanned and saved as an image).
+2. Save the map image as `garage_map.png` in the `public` folder of your frontend (`garagebuddy_frontend/public/garage_map.png`).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   - Ensure that the image is not too large (e.g., **under 2MB**) for faster loading times.
 
-### Analyzing the Bundle Size
+## **Running the Application**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. **Start the backend server**:
 
-### Making a Progressive Web App
+   ```bash
+   cd backend
+   python app.py
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+   - The server will start at `http://localhost:5000`.
 
-### Advanced Configuration
+2. **Start the frontend server**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+   ```bash
+   cd garagebuddy_frontend
+   npm start
+   ```
 
-### Deployment
+   - The frontend will start at `http://localhost:3000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## **Accessing the Application on Mobile**
 
-### `npm run build` fails to minify
+- Make sure your mobile device and the development machine are connected to the **same Wi-Fi network**.
+- Access the frontend using your computer's IP address:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  - Find your computer's IP address:
+    - **Windows**: Run `ipconfig` in Command Prompt and look for `IPv4 Address`.
+    - **Mac/Linux**: Run `ifconfig` or `ip a` in Terminal and look for `inet` or `inet addr`.
+  - Visit `http://<your-ip-address>:3000` on your mobile browser.
+
+- The app will automatically adjust the backend URL to ensure proper functionality on mobile.
+
+## **Project Structure**
+
+```
+garagebuddy/
+│
+├── backend/                 # Flask backend
+│   ├── app.py               # Main Flask app file
+│   ├── models.py            # Database models
+│   ├── uploads/             # Directory for uploaded images
+│   └── requirements.txt     # Python dependencies
+│
+├── garagebuddy_frontend/    # React frontend
+│   ├── public/
+│   │   └── garage_map.png   # Custom map of the garage
+│   ├── src/
+│   │   ├── components/      # React components (ItemCard, ItemForm, etc.)
+│   │   ├── App.js           # Main React app file
+│   │   └── index.js         # React entry point
+│   └── package.json         # Node.js dependencies
+│
+└── README.md                # Project documentation
+```
+
+## **Technologies Used**
+
+- **Frontend**: React, Material-UI, React-Konva
+- **Backend**: Flask, SQLAlchemy
+- **Database**: SQLite
+- **Other Tools**: Axios, Konva, React Router
+
+## **Troubleshooting**
+
+- **Image Not Displaying on Mobile**: Ensure the `garage_map.png` file is in the correct location and that you are accessing the app using the IP address of your computer.
+- **CORS Errors**: Make sure `CORS` is enabled in the backend with `flask-cors` and that the frontend is set up to communicate with `http://localhost:5000`.
+- **Database Issues**: Ensure that `garage.db` exists in the `backend` folder and that the Python virtual environment is activated when running the backend.
+- **Port Conflicts**: If `localhost:3000` or `localhost:5000` is already in use, change the port numbers in the respective configurations.
+
+## **Contributing**
+
+1. **Fork the repository**.
+2. **Create a new branch** (`git checkout -b feature/your-feature`).
+3. **Make your changes** and **commit** (`git commit -m 'Add some feature'`).
+4. **Push to the branch** (`git push origin feature/your-feature`).
+5. **Open a pull request**.
+
+## **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
