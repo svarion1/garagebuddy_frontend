@@ -1,13 +1,8 @@
 import React from "react";
 // Import MUI components
 import {
-  Card,
-  CardContent,
-  CardMedia,
   Typography,
   IconButton,
- 
-  CardActionArea,
 } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 
@@ -19,15 +14,10 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { Link } from "react-router-dom";
  const getBackendURL = () => {
-    const host = window.location.hostname;
-
-    // If localhost, use local backend
-    if (host === "localhost" || host === "127.0.0.1") {
-      return "http://localhost:5000";
-    }
+     
 
     // Otherwise, use the current host's IP
-    return `http://${host}:5000`;
+    return `https://7762-5-77-95-109.ngrok-free.app`;
   };
   
 export const backendURL = getBackendURL();
@@ -139,28 +129,6 @@ const ItemCard = ({ item, fetchItems }) => {
 };
 
 
-
-const titleFontSize = "1rem";
-const subtitleFontSize = "0.75rem";
-const family = "'Open Sans', sans-serif";
-
-const tutorInfoStyles = () => ({
-  title: {
-    fontFamily: family,
-    color: "#4d4b5f",
-    fontSize: titleFontSize,
-    lineHeight: 1.2,
-    fontWeight: 700,
-    marginBottom: "0.125rem",
-  },
-  subtitle: {
-    fontFamily: family,
-    color: "#696c6f",
-    fontWeight: 500,
-    fontSize: subtitleFontSize,
-    lineHeight: 1.4,
-  },
-});
 
 const StyledIconButton = styled(IconButton)(() => ({
   backgroundColor: "#fff",
