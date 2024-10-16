@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Typography, Grid2  } from '@mui/material';
-import ItemCard from './ItemCard';
+import FilteredInventoryList from './FilteredInventoryList';
 
 const ItemList = () => {
   const [items, setItems] = useState([]);
@@ -23,19 +22,7 @@ const ItemList = () => {
 
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Inventory Items
-      </Typography>
-      <Grid2 sx={{
-          display: "flex",
-          justifyContent: "center", // Center cards on mobile
-        }} container spacing={2}>
-        {items.map(item => (
-          <ItemCard key={item.id} item={item} fetchItems={fetchItems} />
-        ))}
-      </Grid2>
-    </Container>
+    <FilteredInventoryList items={items} fetchItems={fetchItems} />
   );
 };
 
