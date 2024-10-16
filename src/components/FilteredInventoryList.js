@@ -4,7 +4,7 @@ import {
   Box,
   Table,
   TableBody,
-  TableCell,
+  
   TableContainer,
   TableHead,
   TableRow,
@@ -18,18 +18,33 @@ import {
   IconButton,
   Typography,
   Chip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import Search from "@mui/icons-material/Search";
 import { backendURL } from "./ItemCard";
+import MobileInventoryCard from "./MobileInventoryCard"
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
- 
+import styled from '@emotion/styled'
+
+
 const FilteredInventoryList = ({ items = [], fetchItems }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const navigate = useNavigate();
+
+  const handleNavigate = (itemId) => {
+    navigate(`/items/${itemId}`);
+  };
 
   // Extract unique categories and locations for filters
   const categories = [
@@ -71,7 +86,19 @@ const FilteredInventoryList = ({ items = [], fetchItems }) => {
 
     return luminance > 0.5 ? "#000000" : "#ffffff";
   };
+
+
+  const StyledTableCell = styled(TableCell)(() => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
   
+
   const getLocationColor = (location) => {
     if (!location) return { bg: "#e0e0e0", text: "#000000" };
     const normalizedLocation = location.toLowerCase();
@@ -117,7 +144,7 @@ const FilteredInventoryList = ({ items = [], fetchItems }) => {
     <Container sx={{ maxWidth: "lg", mx: "auto", p: 4 }}>
       <Box sx={{ mb: 6 }}>
         <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
-          Inventory Items
+          Inventory
         </Typography>
 
         <Box
@@ -132,7 +159,7 @@ const FilteredInventoryList = ({ items = [], fetchItems }) => {
               style={{
                 position: "absolute",
                 left: 12,
-                top: 12,
+                top: 18,
                 width: 20,
                 height: 20,
                 color: "#666",
@@ -197,112 +224,332 @@ const FilteredInventoryList = ({ items = [], fetchItems }) => {
           </FormControl>
         </Box>
       </Box>
-
-      <TableContainer
-        component={Paper}
-        sx={{
-          boxShadow: 1,
-          borderRadius: 2,
-          overflow: "hidden",
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: "grey.50" }}>
-              <TableCell>Image</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredItems.map((item) => (
-              <TableRow
-                key={item.id}
-                sx={{ "&:hover": { bgcolor: "grey.50" } }}
-              >
-                <TableCell>
-                  <Avatar
-                    src={
-                      item.image_path
-                        ? `${backendURL}/uploads/${item.image_path
-                            .split(/[\\/]/)
-                            .pop()}`
-                        : "/api/placeholder/48/48"
-                    }
-                    sx={{ width: 48, height: 48 }}
-                    variant="square"
-                  />
-                </TableCell>
-                <TableCell sx={{ fontWeight: "medium" }}>{item.name}</TableCell>
-                <TableCell>
-                  {item.category && (
-                    <Chip
-                      label={item.category}
-                      sx={{
-                        bgcolor: "primary.light",
-                        color: "primary.dark",
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {item.location_tag && (
-                    <Chip
-                      label={item.location_tag}
-                      sx={{
-                        bgcolor: getLocationColor(item.location_tag).bg,
-                        color: getLocationColor(item.location_tag).text,
-                        "& .MuiChip-label": {
-                          fontWeight: 500,
-                        },
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell
+      <Box>
+        {isMobile ? (
+          filteredItems.map((item) => (
+            <MobileInventoryCard
+              key={item.id}
+              item={item}
+              handleDeleteItem={handleDeleteItem}
+              handleNavigate={handleNavigate}
+              getLocationColor={getLocationColor}
+            />
+          ))
+        ) : (
+          // If not on mobile, keep the table layout (not included here for brevity)
+          <TableContainer
+          component={Paper}
+          sx={{
+            boxShadow: 1,
+            borderRadius: 2,
+            overflowX: "auto", // Enable horizontal scrolling for the table
+            overflow: isMobile ? "auto" : "hidden", // Adjust overflow for mobile
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ bgcolor: "grey.50" }}>
+                {!isMobile && <StyledTableCell>Image</StyledTableCell>}{" "}
+                {/* Hide column on mobile */}
+                <StyledTableCell>Name</StyledTableCell>
+                {!isMobile && <StyledTableCell>Category</StyledTableCell>}{" "}
+                {/* Hide on mobile */}
+                <StyledTableCell>Location</StyledTableCell>
+                {!isMobile && <StyledTableCell>Description</StyledTableCell>}{" "}
+                <StyledTableCell>Actions</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredItems.map((item) => (
+                <TableRow
+                  key={item.id}
                   sx={{
-                    maxWidth: "300px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    "&:hover": { bgcolor: "grey.50" },
+                    display:  "table-row", // Display as block on mobile
+                  
                   }}
                 >
-                  {item.description}
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={() => handleDeleteItem(item.id)}
-                    sx={{
-                      color: "error.main",
-                      "&:hover": {
-                        color: "error.dark",
-                      },
-                    }}
-                  >
-                    <DeleteIcon style={{ width: 20, height: 20 }} />
-                  </IconButton>
-                  <Box component={Link} to={`/items/${item.id}`}>
-                    <IconButton
-                      sx={{
-                        color: "primary.light",
-                        "&:hover": {
-                          color: "primary.dark",
-                        },
-                      }}
-                    >
-                      <ArrowForwardIosIcon style={{ width: 20, height: 20 }} />
-                    </IconButton>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                    <>
+                      <TableCell>
+                        <Avatar
+                          src={
+                            item.image_path
+                              ? `${backendURL}/uploads/${item.image_path
+                                  .split(/[\\/]/)
+                                  .pop()}`
+                              : "/api/placeholder/48/48"
+                          }
+                          sx={{ width: 48, height: 48 }}
+                          variant="square"
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: "medium" }}>
+                        {item.name}
+                      </TableCell>
+                      <TableCell>
+                        {item.category && (
+                          <Chip
+                            label={item.category}
+                            sx={{
+                              bgcolor: "primary.light",
+                              color: "primary.dark",
+                            }}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {item.location_tag && (
+                          <Chip
+                            label={item.location_tag}
+                            sx={{
+                              bgcolor: getLocationColor(item.location_tag).bg,
+                              color: getLocationColor(item.location_tag).text,
+                              "& .MuiChip-label": {
+                                fontWeight: 500,
+                              },
+                            }}
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          maxWidth: "300px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.description}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          onClick={() => handleDeleteItem(item.id)}
+                          sx={{
+                            color: "error.main",
+                            "&:hover": {
+                              color: "error.dark",
+                            },
+                          }}
+                        >
+                          <DeleteIcon style={{ width: 20, height: 20 }} />
+                        </IconButton>
+                        <Box component={Link} to={`/items/${item.id}`}>
+                          <IconButton
+                            sx={{
+                              color: "primary.light",
+                              "&:hover": {
+                                color: "primary.dark",
+                              },
+                            }}
+                          >
+                            <ArrowForwardIosIcon
+                              style={{ width: 20, height: 20 }}
+                            />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </>
+                  
+                </TableRow>
+              ))}
+         
+            </TableBody>
+          </Table>
+        </TableContainer>
+        )}
+      </Box>
+
     </Container>
+
+    // <Container sx={{ maxWidth: "lg", mx: "auto", p: 4 }}>
+    //   <Box sx={{ mb: 6 }}>
+    //     <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
+    //       Inventory Items
+    //     </Typography>
+
+    //     <Box
+    //       sx={{
+    //         display: "grid",
+    //         gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+    //         gap: 2,
+    //       }}
+    //     >
+    //       <Box sx={{ position: "relative" }}>
+    //         <Search
+    //           style={{
+    //             position: "absolute",
+    //             left: 12,
+    //             top: 12,
+    //             width: 20,
+    //             height: 20,
+    //             color: "#666",
+    //           }}
+    //         />
+    //         <TextField
+    //           placeholder="Search items..."
+    //           value={searchTerm}
+    //           onChange={(e) => setSearchTerm(e.target.value)}
+    //           fullWidth
+    //           InputProps={{
+    //             sx: { pl: 5 },
+    //           }}
+    //         />
+    //       </Box>
+
+    //       <FormControl fullWidth>
+    //         <InputLabel>Category</InputLabel>
+    //         <Select
+    //           value={categoryFilter}
+    //           onChange={(e) => setCategoryFilter(e.target.value)}
+    //           label="Category"
+    //         >
+    //           {categories.map((cat) => (
+    //             <MenuItem key={cat} value={cat}>
+    //               {cat.charAt(0).toUpperCase() + cat.slice(1)}
+    //             </MenuItem>
+    //           ))}
+    //         </Select>
+    //       </FormControl>
+
+    //       <FormControl fullWidth>
+    //         <InputLabel>Location</InputLabel>
+    //         <Select
+    //           value={locationFilter}
+    //           onChange={(e) => setLocationFilter(e.target.value)}
+    //           label="Location"
+    //         >
+    //           {locations.map((loc) => (
+    //             <MenuItem key={loc} value={loc}>
+    //               <Box
+    //                 sx={{
+    //                   display: "flex",
+    //                   alignItems: "center",
+    //                   gap: 1,
+    //                 }}
+    //               >
+    //                 <Box
+    //                   sx={{
+    //                     width: 16,
+    //                     height: 16,
+    //                     borderRadius: "50%",
+    //                     backgroundColor: getLocationColor(loc.toLowerCase()).bg,
+    //                     border: "1px solid rgba(0,0,0,0.1)",
+    //                   }}
+    //                 />
+    //                 {loc.charAt(0).toUpperCase() + loc.slice(1)}
+    //               </Box>
+    //             </MenuItem>
+    //           ))}
+    //         </Select>
+    //       </FormControl>
+    //     </Box>
+    //   </Box>
+
+    //   <TableContainer
+    //     component={Paper}
+    //     sx={{
+    //       boxShadow: 1,
+    //       borderRadius: 2,
+    //       overflow: "hidden",
+    //     }}
+    //   >
+    //     <Table>
+    //       <TableHead>
+    //         <TableRow sx={{ bgcolor: "grey.50" }}>
+    //           <TableCell>Image</TableCell>
+    //           <TableCell>Name</TableCell>
+    //           <TableCell>Category</TableCell>
+    //           <TableCell>Location</TableCell>
+    //           <TableCell>Description</TableCell>
+    //           <TableCell>Actions</TableCell>
+    //         </TableRow>
+    //       </TableHead>
+    //       <TableBody>
+    //         {filteredItems.map((item) => (
+    //           <TableRow
+    //             key={item.id}
+    //             sx={{ "&:hover": { bgcolor: "grey.50" } }}
+    //           >
+    //             <TableCell>
+    //               <Avatar
+    //                 src={
+    //                   item.image_path
+    //                     ? `${backendURL}/uploads/${item.image_path
+    //                         .split(/[\\/]/)
+    //                         .pop()}`
+    //                     : "/api/placeholder/48/48"
+    //                 }
+    //                 sx={{ width: 48, height: 48 }}
+    //                 variant="square"
+    //               />
+    //             </TableCell>
+    //             <TableCell sx={{ fontWeight: "medium" }}>{item.name}</TableCell>
+    //             <TableCell>
+    //               {item.category && (
+    //                 <Chip
+    //                   label={item.category}
+    //                   sx={{
+    //                     bgcolor: "primary.light",
+    //                     color: "primary.dark",
+    //                   }}
+    //                 />
+    //               )}
+    //             </TableCell>
+    //             <TableCell>
+    //               {item.location_tag && (
+    //                 <Chip
+    //                   label={item.location_tag}
+    //                   sx={{
+    //                     bgcolor: getLocationColor(item.location_tag).bg,
+    //                     color: getLocationColor(item.location_tag).text,
+    //                     "& .MuiChip-label": {
+    //                       fontWeight: 500,
+    //                     },
+    //                   }}
+    //                 />
+    //               )}
+    //             </TableCell>
+    //             <TableCell
+    //               sx={{
+    //                 maxWidth: "300px",
+    //                 overflow: "hidden",
+    //                 textOverflow: "ellipsis",
+    //                 whiteSpace: "nowrap",
+    //               }}
+    //             >
+    //               {item.description}
+    //             </TableCell>
+    //             <TableCell>
+    //               <IconButton
+    //                 onClick={() => handleDeleteItem(item.id)}
+    //                 sx={{
+    //                   color: "error.main",
+    //                   "&:hover": {
+    //                     color: "error.dark",
+    //                   },
+    //                 }}
+    //               >
+    //                 <DeleteIcon style={{ width: 20, height: 20 }} />
+    //               </IconButton>
+    //               <Box component={Link} to={`/items/${item.id}`}>
+    //                 <IconButton
+    //                   sx={{
+    //                     color: "primary.light",
+    //                     "&:hover": {
+    //                       color: "primary.dark",
+    //                     },
+    //                   }}
+    //                 >
+    //                   <ArrowForwardIosIcon style={{ width: 20, height: 20 }} />
+    //                 </IconButton>
+    //               </Box>
+    //             </TableCell>
+    //           </TableRow>
+    //         ))}
+    //       </TableBody>
+    //     </Table>
+    //   </TableContainer>
+    // </Container>
   );
 };
 

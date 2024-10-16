@@ -33,7 +33,7 @@ const MapComponent = ({ onLocationSelect, location, readOnly = false }) => {
         const isMobile = window.innerWidth <= 768;
         const maxWidth = isMobile
           ? window.innerWidth * 0.85
-          : window.innerWidth * 0.6;
+          : window.innerWidth * 0.4;
         const scale = maxWidth / imageWidth;
         const newHeight = imageHeight * scale;
 
